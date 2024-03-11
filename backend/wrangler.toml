@@ -3,8 +3,8 @@ main = "src/index.ts"
 compatibility_date = "2023-12-01"
 
 [vars]
-DATABASE_URL=""
-JWT_SECRET=""
+DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZDJmYzViMDUtYjg3YS00Njg3LTk1MTgtYjdmMWUyMWY5NTdiIiwidGVuYW50X2lkIjoiYjQzYjcwYzY2YzY2M2MyMDk2OTRjNWEwMTIxMmQzOWJmNjNjZGYzNTA2ZTMxMmJjOTEyNDU4ZGI0MDJmNzMzYiIsImludGVybmFsX3NlY3JldCI6IjU1YmI1NWFjLTM5ODctNDczOC1iNjcwLTM2MzY3YWNmNDRiZCJ9.YdX_j6LoYmqt6HHj9NbymDNIOTcSDy53K9J78O5inwY"
+JWT_SECRET="My_secret"
 
 # MY_VARIABLE = "production_value"
 
