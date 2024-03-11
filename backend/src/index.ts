@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { env } from "hono/adapter";
+import { cors } from "hono/cors";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { todo } from "./routes/todo";
@@ -12,6 +13,7 @@ declare module "hono" {
   }
 }
 const app = new Hono();
+app.use("*", cors());
 
 app.use("*", async (c, next) => {
   // c.env.DATABASE_URL

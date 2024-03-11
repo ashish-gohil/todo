@@ -35,6 +35,7 @@ todo.get("/", async (c) => {
 });
 
 todo.post("/", async (c) => {
+  console.log("inside post todo");
   const { JWT_SECRET } = env<{ JWT_SECRET: string }>(c);
   const prisma: PrismaClient = c.get("prisma");
   try {
@@ -80,23 +81,11 @@ todo.put("/", async (c) => {
       where: {
         id: todoId,
         userId: id,
-        // AND: [
-        //   {
-        //     id: {
-        //       equals: todoId,
-        //     },
-        //   },
-        //   {
-        //     userId: {
-        //       equals: id,
-        //     },
-        //   },
-        // ],
       },
       data: {
         name,
         description,
-        // isDone,
+        isDone,
       },
       select: {
         id: true,
