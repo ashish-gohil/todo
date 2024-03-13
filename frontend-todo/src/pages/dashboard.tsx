@@ -1,6 +1,8 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import { instance } from "../assets/authconfig";
 import AddEditTodoModal, { ModalType } from "../components/AddOrEditTodo";
+import Loader from "../components/Loader";
+import PopupBox from "../components/Poup";
 // import { useNavigate } from "react-router-dom";
 type Todo = {
   id: string;
@@ -10,13 +12,18 @@ type Todo = {
 };
 
 const Dashboard: React.FC = () => {
-  let name,
-    id,
-    description,
-    isDone,
-    isEditOrAdd: ModalType = "edit";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [modalType, setModalType] = useState<ModalType>("add");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isPopupOpen, setPopUpOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDesc] = useState("");
+  const [isDone, setIsDone] = useState(false);
+  const [todoId, setId] = useState("");
+
   // const navigate = useNavigate();
   useEffect(() => {
     fetchAllTodos();
@@ -24,50 +31,61 @@ const Dashboard: React.FC = () => {
 
   const fetchAllTodos = async () => {
     try {
+      setIsLoading(true);
       const response = await instance.get("todo");
       setTodos(response.data.todos);
       console.log(response.data.todos);
-    } catch (err) {
-      console.log(err);
-      console.log("Error while fetching data");
+      setIsLoading(false);
+    } catch (err: any) {
+      setIsSuccess(false);
+      setMessage(err?.response?.data?.msg || "Error while fetching data");
+      setPopUpOpen(true);
+      setIsLoading(false);
     }
   };
   const addTodoHandler = () => {
-    isEditOrAdd = "add";
-    setIsModalOpen(true);
+    setIsDone((prev) => false);
+    setModalType((prev) => "add");
+    setName((prev) => "");
+    setDesc((prev) => "");
+    setIsModalOpen((prev) => true);
   };
   const editTodoHandler: MouseEventHandler<SVGSVGElement> = (e) => {
+    setModalType("edit");
     const target = e.target as HTMLElement;
-    id = target.id;
-    isEditOrAdd = "edit";
-    console.log(target.id);
+    setId((prev) => target.id);
     const editedTodo: Todo[] = todos.filter((todo) => todo.id === target.id);
     console.log(editedTodo);
-    name = editedTodo[0]?.name;
-    description = editedTodo[0]?.description;
-    isDone = editedTodo[0]?.isDone;
-    console.log(description, name, isDone, isEditOrAdd);
-    setIsModalOpen(true);
+    setName((prev) => editedTodo[0]?.name);
+    setDesc((prev) => editedTodo[0]?.description);
+    setIsDone((prev) => editedTodo[0]?.isDone);
+    setIsModalOpen((prev) => true);
   };
 
   const deleteTodoHandler: MouseEventHandler<SVGSVGElement> = async (e) => {
     try {
+      setIsLoading(true);
       const target = e.target as HTMLElement;
-      console.log(e.target);
-      id = target.id;
+      const id = target.id;
       const res = await instance.delete("todo", {
-        // headers: {
-        //   Authorization: `Bearer ${localStorage.getItem("todoToken")}`,
-        // },
         data: { todoId: id },
       });
-      console.log(res.data);
-      // navigate("/dashboard");
-      location.reload();
-    } catch (err) {
-      console.log(err);
+      console.log(res);
+      if (res) {
+        setIsLoading(false);
+        location.reload();
+      }
+    } catch (err: any) {
+      setIsSuccess(false);
+      setMessage(err?.response?.data?.msg || "Error while delete Todo");
+      setPopUpOpen(true);
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-gray-100 flex-col">
@@ -91,6 +109,26 @@ const Dashboard: React.FC = () => {
                     type="checkbox"
                     className="p-3"
                     checked={todo.isDone}
+                    onChange={async (e) => {
+                      try {
+                        setIsLoading(true)
+                        const response = await instance.put("todo", {
+                          todoId: todo.id,
+                          isDone: e.target.checked,
+                        });
+                        if (response) {
+                          setIsLoading(false);
+                          location.reload();
+                        }
+                      } catch (err: any) {
+                        setIsSuccess(false);
+                        setMessage(
+                          err?.response?.data?.msg || "Error while delete Todo"
+                        );
+                        setPopUpOpen(true);
+                        setIsLoading(false);
+                      }
+                    }}
                   />
                   <div className="pl-2">{todo.name}</div>
                   <div className="pl-2">{todo.description}</div>
@@ -139,16 +177,28 @@ const Dashboard: React.FC = () => {
       </div>
       {isModalOpen ? (
         <AddEditTodoModal
+          setIsLoading={setIsLoading}
+          setMessage={setMessage}
+          setPopUpOpen={setPopUpOpen}
+          setIsSuccess={setIsSuccess}
           setIsModalOpen={setIsModalOpen}
           name={name || ""}
           description={description || ""}
           isDone={isDone || false}
-          typeOfModal={isEditOrAdd}
-          id={id}
+          typeOfModal={modalType}
+          id={todoId}
         />
       ) : (
         ""
       )}
+      <PopupBox
+        isOpen={isPopupOpen}
+        isSuccess={isSuccess}
+        message={message}
+        onClose={() => {
+          setPopUpOpen(false);
+        }}
+      />
     </>
   );
 };

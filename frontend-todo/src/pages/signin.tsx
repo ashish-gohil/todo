@@ -1,20 +1,30 @@
 import React, { useState } from "react";
-import PopupBox from "../Poup";
+import PopupBox from "../components/Poup";
 import axios from "axios";
 import { apiEndpoints } from "../assets/authconfig";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 // import '../../styles/index.css'
 
 interface SignInInterface {}
 const SignIn: React.FC<SignInInterface> = ({}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isPopupOpen, setPopUpOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const resetFields = () => {
+    setEmail("");
+    setPassword("");
+  };
   const signInHandler = async () => {
     try {
+      setIsLoading(true);
       const res = await axios.post(
-        `${apiEndpoints.backendAPIEndpiont}/user/signup`,
+        `${apiEndpoints.backendAPIEndpiont}/user/signin`,
         {
           email,
           password,
@@ -22,12 +32,20 @@ const SignIn: React.FC<SignInInterface> = ({}) => {
       );
       console.log(res.data.token);
       localStorage.setItem("todoToken", res.data.token);
-      navigate("/dashboard");
-    } catch (err) {
-      console.log("error");
-      console.log(err);
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/dashboard");
+      }, 2000);
+    } catch (err: any) {
+      setIsSuccess(false);
+      setMessage(err?.response?.data?.msg || "Error while signin!");
+      setPopUpOpen(true);
+      setIsLoading(false);
     }
   };
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -90,10 +108,13 @@ const SignIn: React.FC<SignInInterface> = ({}) => {
         </div>
       </div>
       <PopupBox
-        isOpen={false}
-        isSuccess={true}
-        message={""}
-        onClose={() => {}}
+        isOpen={isPopupOpen}
+        isSuccess={isSuccess}
+        message={message}
+        onClose={() => {
+          setPopUpOpen(false);
+          resetFields();
+        }}
       />
     </>
   );
