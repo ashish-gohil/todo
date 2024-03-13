@@ -44,22 +44,30 @@ const Dashboard: React.FC = () => {
     }
   };
   const addTodoHandler = () => {
-    setIsDone((prev) => false);
-    setModalType((prev) => "add");
-    setName((prev) => "");
-    setDesc((prev) => "");
-    setIsModalOpen((prev) => true);
+    setIsDone(false);
+    setModalType("add");
+    setName("");
+    setDesc("");
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsModalOpen(true);
+    }, 1000);
   };
   const editTodoHandler: MouseEventHandler<SVGSVGElement> = (e) => {
     setModalType("edit");
     const target = e.target as HTMLElement;
-    setId((prev) => target.id);
+    setId(target.id);
     const editedTodo: Todo[] = todos.filter((todo) => todo.id === target.id);
     console.log(editedTodo);
-    setName((prev) => editedTodo[0]?.name);
-    setDesc((prev) => editedTodo[0]?.description);
-    setIsDone((prev) => editedTodo[0]?.isDone);
-    setIsModalOpen((prev) => true);
+    setName(editedTodo[0]?.name);
+    setDesc(editedTodo[0]?.description);
+    setIsDone(editedTodo[0]?.isDone);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsModalOpen(true);
+    }, 2000);
   };
 
   const deleteTodoHandler: MouseEventHandler<SVGSVGElement> = async (e) => {

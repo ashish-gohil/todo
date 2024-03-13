@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     // "rootDir": "./src",
     // "outDir": "./dist",
     "module": "ESNext",
