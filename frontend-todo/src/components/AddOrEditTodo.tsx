@@ -10,7 +10,7 @@ interface AddEditTodoModal {
   description: string;
   typeOfModal: ModalType;
   id?: string;
-  setIsLoading: (arg0:(prev: any) => boolean) => void;
+  setIsLoading: (isLoading: boolean) => void;
   setMessage: (msg: string) => void;
   setPopUpOpen: (popup: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
@@ -41,7 +41,7 @@ const AddEditTodoModal = ({
   const addEditTodoHandler = async () => {
     if (typeOfModal === "add") {
       try {
-        setIsLoading(prev=>true);
+        setIsLoading(true);
         const response = await instance.post("todo", {
           name: todoname,
           description: tododDesc,
@@ -49,19 +49,19 @@ const AddEditTodoModal = ({
         });
 
         if (response) {
-          setIsModalOpen(false)
+          setIsModalOpen(false);
           location.reload();
         }
       } catch (err: any) {
-        setIsModalOpen(false)
+        setIsModalOpen(false);
         setIsSuccess(false);
         setMessage(err?.response?.data?.msg || "Error while updating Todo");
         setPopUpOpen(true);
-        setIsLoading(prev=>false);
+        setIsLoading(false);
       }
     } else {
       try {
-        setIsLoading(prev=>true);
+        setIsLoading(true);
         const response = await instance.put("todo", {
           todoId: id,
           name: todoname,
@@ -70,16 +70,16 @@ const AddEditTodoModal = ({
         });
         if (response) {
           // setTimeout(() => {
-          setIsModalOpen(false)
-          location.reload()
+          setIsModalOpen(false);
+          location.reload();
           // }, 2000);
         }
       } catch (err: any) {
-        setIsModalOpen(false)
+        setIsModalOpen(false);
         setIsSuccess(false);
         setMessage(err?.response?.data?.msg || "Error while adding Todo");
         setPopUpOpen(true);
-        setIsLoading(prev=>false);
+        setIsLoading(false);
       }
     }
   };
