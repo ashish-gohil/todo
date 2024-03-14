@@ -1,5 +1,8 @@
 Access App on : https://todo-one-dusky.vercel.app/
+- Deploy Backend on Cloudflare worker
+- Deploy Front End on Vercel
 
+  
 #Stack for this To-Do App
 
 1. Typescript as the language
@@ -7,6 +10,3 @@ Access App on : https://todo-one-dusky.vercel.app/
 3. Postgres as the database
 4. Zod as validation library
 
-- Deploy Backend on Cloudflare worker
-- Deploy Front End on Vercel
-- 
