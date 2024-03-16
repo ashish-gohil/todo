@@ -31,11 +31,12 @@ const SignIn: React.FC<SignInInterface> = ({}) => {
         }
       );
       console.log(res.data.token);
+      localStorage.removeItem("todoToken");
       localStorage.setItem("todoToken", res.data.token);
       setTimeout(() => {
         setIsLoading(false);
         navigate("/dashboard");
-      }, 2000);
+      }, 4000);
     } catch (err: any) {
       setIsSuccess(false);
       setMessage(err?.response?.data?.msg || "Error while signin!");
