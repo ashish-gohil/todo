@@ -32,11 +32,10 @@ const SignIn: React.FC<SignInInterface> = ({}) => {
       );
       console.log(res.data.token);
       localStorage.removeItem("todoToken");
-      localStorage.setItem("todoToken", res.data.token);
-      setTimeout(() => {
-        setIsLoading(false);
-        navigate("/dashboard");
-      }, 4000);
+      localStorage.setItem("todoToken", res.data.token);      
+      setIsLoading(false);
+      navigate("/dashboard");
+     
     } catch (err: any) {
       setIsSuccess(false);
       setMessage(err?.response?.data?.msg || "Error while signin!");
